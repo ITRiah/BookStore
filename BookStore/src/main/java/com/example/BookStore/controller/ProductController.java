@@ -3,6 +3,8 @@ package com.example.BookStore.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,14 +38,14 @@ public class ProductController {
 				@ModelAttribute 
 				@Valid ProductDTO ProductDTO) throws IllegalStateException, IOException {
 		MultipartFile file = ProductDTO.getFile();
-		
+		String imageDirectory = "C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\";
+
 		if(file != null) {
 			String fileName = file.getOriginalFilename();
 			String uniqueFileName =  UUID.randomUUID().toString() + "_" + fileName;
-			String filePath = "E:\\Studying\\Java Backend\\Springboot\\BookStore\\src\\main\\java\\com\\example\\BookStore\\image\\product\\"
-					+ uniqueFileName;
-			file.transferTo(new File(filePath));
-			ProductDTO.setImage(filePath);
+			Path filePath = Path.of(imageDirectory + uniqueFileName);
+			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+			ProductDTO.setImage(uniqueFileName);
 		}
 		
 		ProductService.create(ProductDTO);
@@ -50,6 +53,27 @@ public class ProductController {
 					.status(200)
 					.msg("ok")
 					.build();
+	}
+	
+	@PutMapping("/")
+	public ResponseDTO<Void> update(@ModelAttribute ProductDTO productDTO) throws IllegalStateException, IOException {
+	
+		MultipartFile file = productDTO.getFile();
+		
+		if(file != null) {
+			String fileName = file.getOriginalFilename();
+			String uniqueFileName =  UUID.randomUUID().toString() + "_" + fileName;
+			String filePath = "C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\" + uniqueFileName;
+			file.transferTo(new File(filePath));
+			productDTO.setImage(uniqueFileName);
+		}
+		
+		ProductService.update(productDTO);
+		
+		return ResponseDTO.<Void>builder()
+			.status(200)
+			.msg("update success")
+			.build();
 	}
 	
 	@GetMapping("/")
@@ -64,7 +88,7 @@ public class ProductController {
 	
 	@GetMapping("/download")
 	public void download(@RequestParam("fileName") String fileName, HttpServletResponse response) throws IOException {
-		File file = new File("E:\\Studying\\Java Backend\\Springboot\\BookStore\\src\\main\\java\\com\\example\\BookStore\\image\\product\\" + fileName);
+		File file = new File("C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\" + fileName);
 		Files.copy(file.toPath(), response.getOutputStream());// lấy dữ liệu từ file để tải về hình ảnh cho web
 	}
 }

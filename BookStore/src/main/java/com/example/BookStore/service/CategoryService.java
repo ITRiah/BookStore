@@ -8,13 +8,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.BookStore.dto.CategoryDTO;
-import com.example.BookStore.dto.CategoryDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.entity.Category;
 import com.example.BookStore.repo.CategoryRepo;
 
+import jakarta.persistence.NoResultException;
+
 public interface CategoryService {
 	public void create(CategoryDTO categoryDTO);
+	public void update(CategoryDTO categoryDTO);
+	public void delete(int id);
+	public CategoryDTO getById(int id);
 	public Page<CategoryDTO> getAll(SearchDTO searchDTO);
 	
 	@Service
@@ -28,6 +32,26 @@ public interface CategoryService {
 			Category Category = new ModelMapper().map(CategoryDTO, Category.class);
 			CategoryRepo.save(Category);
 		}
+		
+		@Override
+		public void update(CategoryDTO categoryDTO) {
+			// TODO Auto-generated method stub
+			Category categoryCurrent = CategoryRepo.findById(categoryDTO.getId()).orElseThrow( NoResultException :: new);
+			categoryCurrent.setName(categoryDTO.getName());
+			CategoryRepo.save(categoryCurrent);	
+		}
+		
+		@Override
+		public CategoryDTO getById(int id) {
+			Category category = CategoryRepo.getById(id);
+			CategoryDTO categoryDTO = new ModelMapper().map(category, CategoryDTO.class);
+			return categoryDTO;
+		}
+		
+		@Override
+		public void delete(int id) {
+			CategoryRepo.deleteById(id);
+		}	
 
 		@Override
 		public Page<CategoryDTO> getAll(SearchDTO searchDTO) {
@@ -45,7 +69,8 @@ public interface CategoryService {
 			
 			return page2;
 		}
-		
+
+			
 	}
 }
 

@@ -16,7 +16,7 @@ import com.example.BookStore.repo.ProductRepo;
 public interface ProductService {
 	public void create(ProductDTO ProductDTO);
 	public Page<ProductDTO> getAll(SearchDTO searchDTO);
-	public void updateAvatar(String fileName, int id);
+	public void update(ProductDTO productDTO);
 	
 	@Service
 	public class ProductServiceImpl implements ProductService{
@@ -29,6 +29,13 @@ public interface ProductService {
 			Product Product = new ModelMapper().map(ProductDTO, Product.class);
 			ProductRepo.save(Product);
 		}
+		
+		@Override
+		public void update(ProductDTO productDTO) {
+			Product productCurrent = ProductRepo.getById(productDTO.getId());
+			productCurrent = new ModelMapper().map(productDTO, Product.class);
+			ProductRepo.save(productCurrent);
+		}		
 
 		@Override
 		public Page<ProductDTO> getAll(SearchDTO searchDTO) {
@@ -45,14 +52,7 @@ public interface ProductService {
 			Page<ProductDTO> page2 =  page.map(Product -> new ModelMapper().map(Product, ProductDTO.class));
 			
 			return page2;
-		}
-		
-		@Override
-		public void updateAvatar(String fileName, int id) {
-			Product Product = ProductRepo.getById(id);
-			Product.setImage(fileName);
-			ProductRepo.save(Product);
-		}
+		}		
 		
 	}
 }

@@ -8,4 +8,6 @@ import com.example.BookStore.entity.Role;
 
 public interface RoleRepo extends JpaRepository<Role, Integer> {
 	Page<Role> findAll(Pageable pageable);
+	
+	Role findByName(String name);
 }
