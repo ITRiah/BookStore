@@ -12,8 +12,12 @@ import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.entity.Role;
 import com.example.BookStore.repo.RoleRepo;
 
+import jakarta.persistence.NoResultException;
+
 public interface RoleService {
 	public void create(RoleDTO roleDTO);
+	public void update(RoleDTO roleDTO);
+	public void delete(int id );
 	public Page<RoleDTO> getAll(SearchDTO searchDTO);
 	
 	@Service
@@ -43,6 +47,18 @@ public interface RoleService {
 			Page<RoleDTO> page2 =  page.map(role -> new ModelMapper().map(role, RoleDTO.class));
 			
 			return page2;
+		}
+
+		@Override
+		public void update(RoleDTO roleDTO) {
+				Role roleCurrent = roleRepo.findById(roleDTO.getId()).orElseThrow(NoResultException::new);
+				roleCurrent.setName(roleDTO.getName());
+				roleRepo.save(roleCurrent);
+		}
+
+		@Override
+		public void delete(int id) {
+			roleRepo.deleteById(id);
 		}
 		
 	}
