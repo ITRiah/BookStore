@@ -1,5 +1,6 @@
 package com.example.BookStore.repo;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -16,4 +17,7 @@ public interface BillRepo extends JpaRepository<Bill, Integer> {
 	
 	@Query("SELECT b FROM Bill b WHERE b.user.id = :id")
 	List<Bill> getByUserId(int id);
+	
+	@Query("SELECT b FROM Bill b WHERE b.receiveAt BETWEEN :from AND :to")
+	Page<Bill> searchByDate(Date from , Date to, Pageable pageable);
 }

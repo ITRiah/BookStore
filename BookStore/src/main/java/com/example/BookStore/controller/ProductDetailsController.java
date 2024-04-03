@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -35,15 +36,22 @@ public class ProductDetailsController {
 	
 	@Autowired
 	ProductRepo productRepo;
+	
+	@Value("${upload.folder}product/")
+	private String UPLOAD_FOLDER;
 
 	@PostMapping("/")
 	public ResponseDTO<Void> create(@ModelAttribute ProductDetailsDTO ProductDetailsDTO) throws IllegalStateException, IOException {
+		if(!(new File(UPLOAD_FOLDER).exists())) {
+			new File(UPLOAD_FOLDER).mkdirs();
+		}
+		
 		MultipartFile file = ProductDetailsDTO.getFile();		
 		
 		if(file != null) {
 			String fileName = file.getOriginalFilename();
 			String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-			String filePath = (	"C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\" + fileName);
+			String filePath = (	UPLOAD_FOLDER + fileName);
 
 			file.transferTo(new File(filePath));
 			ProductDetailsDTO.setImage(uniqueFileName);
@@ -59,13 +67,16 @@ public class ProductDetailsController {
 	
 	@PutMapping("/")
 	public ResponseDTO<Void> update(@ModelAttribute ProductDetailsDTO ProductDetailsDTO) throws IllegalStateException, IOException {
+		if(!(new File(UPLOAD_FOLDER).exists())) {
+			new File(UPLOAD_FOLDER).mkdirs();
+		}
 		
 		MultipartFile file = ProductDetailsDTO.getFile();		
 		
 		if(file != null) {
 			String fileName = file.getOriginalFilename();
 			String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-			String filePath = (	"C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\" + fileName);
+			String filePath = (	UPLOAD_FOLDER + fileName);
 			
 			//save file
 			file.transferTo(new File(filePath));
@@ -99,8 +110,7 @@ public class ProductDetailsController {
 
 	@GetMapping("/download")
 	public void download(@RequestParam("fileName") String fileName, HttpServletResponse response) throws IOException {
-		File file = new File(
-				"C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\" + fileName);
+		File file = new File(UPLOAD_FOLDER + fileName);
 		Files.copy(file.toPath(), response.getOutputStream());// lấy dữ liệu từ file để tải về hình ảnh cho web
 	}
 }
