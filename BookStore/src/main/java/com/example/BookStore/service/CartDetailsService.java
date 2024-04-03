@@ -23,6 +23,7 @@ public interface CartDetailsService {
 	public void create(CartDetailsDTO CartDetailsDTO);
 	public void update(CartDetailsDTO CartDetailsDTO);
 	public void delete(int id);
+	public CartDetailsDTO findByProductIdAndColor(int id, String color);
 
 	public Page<CartDetailsDTO> getAll(SearchDTO searchDTO);
 	public List<CartDetailsDTO> findByProductId(int productId);
@@ -176,9 +177,12 @@ public interface CartDetailsService {
 		}
 
 
-
-		
-		
+		@Override
+		public CartDetailsDTO findByProductIdAndColor(int id, String color) {
+			CartDetails cartDetails = cartDetailsRepo.getByProductIdAndColor(id, color);
+			CartDetailsDTO cartDetailsDTO =  new ModelMapper().map(cartDetails, CartDetailsDTO.class);
+			return cartDetailsDTO;
+		}
 	}
 }
 

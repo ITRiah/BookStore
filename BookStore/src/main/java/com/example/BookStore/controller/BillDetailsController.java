@@ -30,15 +30,15 @@ public class BillDetailsController {
 
 	@PostMapping("/")
 	public ResponseDTO<Void> create(@RequestBody BillDetailsDTO BillDetailsDTO) {
-		String color = BillDetailsDTO.getColor();
-		
-		List<CartDetailsDTO> detailsDTOs = cartDetailsService.findByProductId(BillDetailsDTO.getProduct().getId());
-		
-		for (CartDetailsDTO cartDetailsDTO : detailsDTOs) {
-			if(cartDetailsDTO.getColor().equals(color)) {
-				cartDetailsService.delete(cartDetailsDTO.getId());
-			}
-		}
+//		String color = BillDetailsDTO.getColor();
+//		
+//		List<CartDetailsDTO> detailsDTOs = cartDetailsService.findByProductId(BillDetailsDTO.getProduct().getId());
+//		
+//		for (CartDetailsDTO cartDetailsDTO : detailsDTOs) {
+//			if(cartDetailsDTO.getColor().equals(color)) {
+//				cartDetailsService.delete(cartDetailsDTO.getId());
+//			}
+//		}
 		
 		BillDetailsService.create(BillDetailsDTO);
 		return ResponseDTO.<Void>builder()

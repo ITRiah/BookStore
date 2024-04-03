@@ -1,14 +1,17 @@
 package com.example.BookStore.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.annotation.LastModifiedDate;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,6 +29,9 @@ public class Bill extends TimeAuditable {
 	@ManyToOne
 	private User user;
 	
+	@OneToMany(mappedBy = "bill", cascade = CascadeType.REMOVE)// em thieu mapby thi fai
+	private List<BillDetails> billDetails;
+	
 	@LastModifiedDate
-	private Date receiveAt;
+	private Date receiveAt; //
 }

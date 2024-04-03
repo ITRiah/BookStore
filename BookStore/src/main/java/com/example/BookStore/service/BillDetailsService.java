@@ -11,10 +11,13 @@ import com.example.BookStore.dto.BillDetailsDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.entity.Bill;
 import com.example.BookStore.entity.BillDetails;
+import com.example.BookStore.entity.Cart;
+import com.example.BookStore.entity.CartDetails;
 import com.example.BookStore.entity.ProductDetails;
 import com.example.BookStore.repo.BillDetailsRepo;
 import com.example.BookStore.repo.BillRepo;
 import com.example.BookStore.repo.CartDetailsRepo;
+import com.example.BookStore.repo.CartRepo;
 import com.example.BookStore.repo.ProductDetailsRepo;
 
 public interface BillDetailsService {
@@ -35,13 +38,18 @@ public interface BillDetailsService {
 				
 		@Autowired
 		CartDetailsRepo cartDetailsRepo;
-
+		
+		@Autowired
+		CartDetailsService cartDetailsService;
+		
 		@Override
 		public void create(BillDetailsDTO BillDetailsDTO) {
 			
 			//update product
 			int productId = BillDetailsDTO.getProduct().getId();
 			String color = BillDetailsDTO.getColor();
+			
+			System.out.println(BillDetailsDTO.getQuantity() + " -qt");
 			
 			ProductDetails productDetails = productDetailsRepo.getByProductIdColor(productId, color);
 			productDetails.setQuantity(productDetails.getQuantity() - BillDetailsDTO.getQuantity());
@@ -51,19 +59,16 @@ public interface BillDetailsService {
 			BillDetailsDTO.setTotalPrice(BillDetailsDTO.getQuantity() * productDetails.getPrice());
 			BillDetails BillDetails = new ModelMapper().map(BillDetailsDTO, BillDetails.class);
 			BillDetailsRepo.save(BillDetails);	
-			
-			System.out.println("billDetails: " + BillDetailsDTO.getQuantity() * productDetails.getPrice());
-			
+						
 			//update bill
 			int billId = BillDetailsDTO.getBill().getId();
 			Bill bill = billRepo.getById(billId);
 			bill.setTotalPrice(bill.getTotalPrice() + BillDetailsDTO.getTotalPrice());
 			billRepo.save(bill);
 			
-			System.out.println("bill" + bill.getTotalPrice());
-
-			
-			
+			//delete cartDetails
+			CartDetails cartDetails = cartDetailsRepo.getByProductIdAndColor(productId, color);
+			cartDetailsService.delete(cartDetails.getId());
 		}
 
 		@Override
@@ -82,7 +87,6 @@ public interface BillDetailsService {
 			
 			return page2;
 		}
-		
 	}
 }
 

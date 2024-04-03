@@ -17,6 +17,8 @@ import com.example.BookStore.dto.ResponseDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.service.CategoryService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/admin/category")
 public class CategoryController {
@@ -25,7 +27,7 @@ public class CategoryController {
 	CategoryService CategoryService;
 
 	@PostMapping("/")
-	public ResponseDTO<Void> create(@RequestBody CategoryDTO CategoryDTO) {
+	public ResponseDTO<Void> create(@RequestBody @Valid CategoryDTO CategoryDTO) {
 		
 		CategoryService.create(CategoryDTO);
 		return ResponseDTO.<Void>builder()
