@@ -19,6 +19,23 @@ public class EmailService {
 	
 	@Autowired
 	SpringTemplateEngine templateEngine;
+	
+	public void sendMail(String subject, String body, String to) {	
+		//sendMail
+		MimeMessage message = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message , StandardCharsets.UTF_8.name());
+		
+		try {
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(body, true);
+			helper.setFrom("vhai31102002@gmail.com");
+			
+			javaMailSender.send(message);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
 
 	
 	public void sendBirthDay(String to, String name) {

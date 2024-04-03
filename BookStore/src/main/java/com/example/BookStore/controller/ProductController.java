@@ -90,7 +90,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("/")
-	public ResponseDTO<Page<ProductDTO>> getAll(@ModelAttribute SearchDTO searchDTO) {
+	public ResponseDTO<Page<ProductDTO>> getAll(@RequestBody SearchDTO searchDTO) {
 		return ResponseDTO.<Page<ProductDTO>>builder()
 					.status(200)
 					.msg("ok")

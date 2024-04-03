@@ -15,15 +15,22 @@ import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.entity.ProductDetails;
 import com.example.BookStore.repo.ProductDetailsRepo;
 
+import jakarta.persistence.NoResultException;
+
 public interface ProductDetailsService {
 	public void create(ProductDetailsDTO ProductDetailsDTO);
+
+	public void update(ProductDetailsDTO ProductDetailsDTO);
+
 	public Page<ProductDetailsDTO> getAll(SearchDTO searchDTO);
+
 	public List<ProductDetailsDTO> findByProductId(int productId);
-	public ProductDetailsDTO findByProductIdAndColor(int productId , String color);
-	
+
+	public ProductDetailsDTO findByProductIdAndColor(int productId, String color);
+
 	@Service
-	public class ProductDetailsServiceImpl implements ProductDetailsService{
-		
+	public class ProductDetailsServiceImpl implements ProductDetailsService {
+
 		@Autowired
 		ProductDetailsRepo ProductDetailsRepo;
 
@@ -34,19 +41,28 @@ public interface ProductDetailsService {
 		}
 
 		@Override
+		public void update(ProductDetailsDTO ProductDetailsDTO) {
+			ProductDetails productDetailsCurrent = ProductDetailsRepo.findById(ProductDetailsDTO.getId())
+																			.orElseThrow(NoResultException::new);
+			productDetailsCurrent = new ModelMapper().map(ProductDetailsDTO, ProductDetails.class);
+			ProductDetailsRepo.save(productDetailsCurrent);
+		}
+
+		@Override
 		public Page<ProductDetailsDTO> getAll(SearchDTO searchDTO) {
-			
-			int currentPage = searchDTO.getCurrentPage() == null ? 0 : searchDTO.getCurrentPage()  ;
+
+			int currentPage = searchDTO.getCurrentPage() == null ? 0 : searchDTO.getCurrentPage();
 			int size = searchDTO.getSize() == null ? 5 : searchDTO.getSize();
-			
+
 			String sortField = searchDTO.getSortedField() == null ? "id" : searchDTO.getSortedField();
 			Sort sort = Sort.by(sortField).ascending();
-			
+
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
 			Page<ProductDetails> page = ProductDetailsRepo.findAll(pageRequest);
-			
-			Page<ProductDetailsDTO> page2 =  page.map(ProductDetails -> new ModelMapper().map(ProductDetails, ProductDetailsDTO.class));
-			
+
+			Page<ProductDetailsDTO> page2 = page
+					.map(ProductDetails -> new ModelMapper().map(ProductDetails, ProductDetailsDTO.class));
+
 			return page2;
 		}
 
@@ -54,22 +70,20 @@ public interface ProductDetailsService {
 		public List<ProductDetailsDTO> findByProductId(int productId) {
 			List<ProductDetails> details = ProductDetailsRepo.getByProductId(productId);
 
-			List<ProductDetailsDTO> detailsDTOs = details.stream().map(
-					productDetails -> new ModelMapper().map(productDetails, ProductDetailsDTO.class)
-			).collect(Collectors.toList());
-			
+			List<ProductDetailsDTO> detailsDTOs = details.stream()
+					.map(productDetails -> new ModelMapper().map(productDetails, ProductDetailsDTO.class))
+					.collect(Collectors.toList());
+
 			return detailsDTOs;
 		}
 
 		@Override
 		public ProductDetailsDTO findByProductIdAndColor(int productId, String color) {
 			ProductDetails productDetails = ProductDetailsRepo.getByProductIdColor(productId, color);
-			
+
 			ProductDetailsDTO productDetailsDTO = new ModelMapper().map(productDetails, ProductDetailsDTO.class);
-			
+
 			return productDetailsDTO;
 		}
 	}
 }
-
-

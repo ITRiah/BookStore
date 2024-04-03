@@ -19,7 +19,7 @@ public class JobScheduler {
 	@Autowired
 	EmailService emailService;
 	
-	//@Scheduled(cron = "* * 8 * * *")
+	@Scheduled(cron = "* * 8 * * *")
 	public void sendMail() {
 		LocalDate date = LocalDate.now();
 		int month = date.getMonthValue();

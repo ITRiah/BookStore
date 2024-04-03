@@ -1,5 +1,7 @@
 package com.example.BookStore.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,11 +53,21 @@ public class BillController {
 	}
 		
 	@GetMapping("/")
-	public ResponseDTO<Page<BillDTO>> getAll(@ModelAttribute SearchDTO searchDTO) {
+	public ResponseDTO<Page<BillDTO>> getAll(@RequestBody SearchDTO searchDTO) {
 		return ResponseDTO.<Page<BillDTO>>builder()
 					.status(200)
 					.msg("ok")
 					.data(BillService.getAll(searchDTO))
 					.build();
 	}
+	
+	@GetMapping("/get-by-user/{id}")
+	public ResponseDTO<List<BillDTO>> getAll(@PathVariable int id) {
+		
+		return ResponseDTO.<List<BillDTO>>builder()
+					.status(200)
+					.msg("ok")
+					.data(BillService.getByUserId(id))
+					.build();
+	}	
 }

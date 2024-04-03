@@ -1,5 +1,6 @@
 package com.example.BookStore.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,9 +47,7 @@ public class UserController {
 				.data(userService.getById(id))
 				.build();
 	}
-	
-	
-		
+			
 	@PutMapping("/")
 	public ResponseDTO<Void> update(@ModelAttribute UserDTO userDTO) throws IOException {
 		
@@ -58,8 +57,8 @@ public class UserController {
 		if(file != null) {
 			String fileName = file.getOriginalFilename();
 			String uniqueFileName =  UUID.randomUUID().toString() + "_" + fileName;
-			Path filePath = Path.of(imageDirectory + uniqueFileName);
-			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+			String filePath = imageDirectory + fileName;
+			file.transferTo(new File(filePath));
 			userDTO.setAvatar(uniqueFileName);
 		}
 		
@@ -91,12 +90,11 @@ public class UserController {
 		if(file != null) {
 			String fileName = file.getOriginalFilename();
 			uniqueFileName =  UUID.randomUUID().toString() + "_" + fileName;
-			Path filePath = Path.of(imageDirectory + uniqueFileName);
-			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+			String filePath = imageDirectory + fileName;
+			file.transferTo(new File(filePath));
 		}
 		
 		userService.updateAvatar(uniqueFileName, id);
-		
 		return ResponseDTO.<Void>builder()
 				.status(200)
 				.msg("ok")

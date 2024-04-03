@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,9 +56,33 @@ public class ProductDetailsController {
 				.build();
 
 	}
+	
+	@PutMapping("/")
+	public ResponseDTO<Void> update(@ModelAttribute ProductDetailsDTO ProductDetailsDTO) throws IllegalStateException, IOException {
+		
+		MultipartFile file = ProductDetailsDTO.getFile();		
+		
+		if(file != null) {
+			String fileName = file.getOriginalFilename();
+			String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
+			String filePath = (	"C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\" + fileName);
+			
+			//save file
+			file.transferTo(new File(filePath));
+			
+			//set image
+			ProductDetailsDTO.setImage(uniqueFileName);
+		}
+		
+		ProductDetailsService.update(ProductDetailsDTO);
+		return ResponseDTO.<Void>builder()
+				.status(200)
+				.msg("ok")
+				.build();
 
+	}
 	@GetMapping("/")
-	public ResponseDTO<Page<ProductDetailsDTO>> getAll(@ModelAttribute SearchDTO searchDTO) {
+	public ResponseDTO<Page<ProductDetailsDTO>> getAll(@RequestBody SearchDTO searchDTO) {
 		return ResponseDTO.<Page<ProductDetailsDTO>>builder().status(200).msg("ok")
 				.data(ProductDetailsService.getAll(searchDTO)).build();
 	}

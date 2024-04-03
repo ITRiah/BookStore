@@ -46,7 +46,7 @@ public class SecurityConfig {
 		httpSecurity.authorizeRequests()
 			.requestMatchers("/admin/**")
 			.hasAnyAuthority("ADMIN", "SUBADMIN") // với đường dẫn admin thì cần có quyền là role_admin/subadmin
-			.requestMatchers("/member/**") 
+			.requestMatchers("/member/**", "/account/**")
 			.authenticated() // với đường dẫn member chỉ cần đăng nhập
 			.anyRequest().permitAll() // tất cả các request khác không cần quyền
 			.and()

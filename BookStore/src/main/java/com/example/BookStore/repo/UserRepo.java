@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.BookStore.entity.User;
 
@@ -14,4 +15,7 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 
 	@Query("SELECT u FROM User u WHERE MONTH(u.birthdate) = :month AND DAY(u.birthdate) = :date")
 	List<User> searchByBirthDay(int date, int month);
+	
+	@Query("SELECT u FROM User u WHERE u.account.id = :accountId")
+	User findByAccountId(@Param("accountId") int accountId);
 }

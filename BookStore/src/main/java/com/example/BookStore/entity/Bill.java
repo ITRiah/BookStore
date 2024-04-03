@@ -29,7 +29,7 @@ public class Bill extends TimeAuditable {
 	@ManyToOne
 	private User user;
 	
-	@OneToMany(mappedBy = "bill", cascade = CascadeType.REMOVE)// em thieu mapby thi fai
+	@OneToMany(mappedBy = "bill", cascade = CascadeType.REMOVE)// mappedBy
 	private List<BillDetails> billDetails;
 	
 	@LastModifiedDate

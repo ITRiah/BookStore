@@ -48,9 +48,7 @@ public interface BillDetailsService {
 			//update product
 			int productId = BillDetailsDTO.getProduct().getId();
 			String color = BillDetailsDTO.getColor();
-			
-			System.out.println(BillDetailsDTO.getQuantity() + " -qt");
-			
+						
 			ProductDetails productDetails = productDetailsRepo.getByProductIdColor(productId, color);
 			productDetails.setQuantity(productDetails.getQuantity() - BillDetailsDTO.getQuantity());
 			productDetailsRepo.save(productDetails);

@@ -65,7 +65,7 @@ public class CategoryController {
 	}
 	
 	@GetMapping("/")
-	public ResponseDTO<Page<CategoryDTO>> getAll(@ModelAttribute SearchDTO searchDTO) {
+	public ResponseDTO<Page<CategoryDTO>> getAll(@RequestBody SearchDTO searchDTO) {
 		return ResponseDTO.<Page<CategoryDTO>>builder()
 					.status(200)
 					.msg("ok")
