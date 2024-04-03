@@ -12,8 +12,13 @@ import com.example.BookStore.dto.UserDTO;
 import com.example.BookStore.entity.User;
 import com.example.BookStore.repo.UserRepo;
 
+import jakarta.persistence.NoResultException;
+
 public interface UserService {
 	public void create(UserDTO userDTO);
+	public void update(UserDTO userDTO);
+	public void delete(int id);
+	public UserDTO getById(int id);
 	public Page<UserDTO> getAll(SearchDTO searchDTO);
 	public void updateAvatar(String fileName, int id);
 	
@@ -27,6 +32,25 @@ public interface UserService {
 		public void create(UserDTO userDTO) {
 			User user = new ModelMapper().map(userDTO, User.class);
 			userRepo.save(user);
+		}
+		
+		@Override
+		public void update(UserDTO userDTO) {
+			User userCurrent = userRepo.findById(userDTO.getId()).orElseThrow(NoResultException::new);
+			userCurrent = new ModelMapper().map(userDTO, User.class);
+			userRepo.save(userCurrent);
+		}
+		
+		@Override
+		public UserDTO getById(int id) {
+			User user = userRepo.findById(id).orElseThrow(NoResultException::new);
+			UserDTO userDTO = new ModelMapper().map(user, UserDTO.class);
+			return userDTO;
+		}		
+
+		@Override
+		public void delete(int id) {
+			userRepo.deleteById(id);;
 		}
 
 		@Override
@@ -51,7 +75,6 @@ public interface UserService {
 			User user = userRepo.getById(id);
 			user.setAvatar(fileName);
 			userRepo.save(user);
-		}
-		
+		}	
 	}
 } 

@@ -14,4 +14,7 @@ public interface CartDetailsRepo extends JpaRepository<CartDetails, Integer> {
 
 	@Query("SELECT p FROM CartDetails p WHERE p.product.id = :id ")
 	List<CartDetails> getByProductId(int id); 
+	
+	@Query("SELECT p FROM CartDetails p WHERE p.product.id = :id AND p.color = :color")
+	CartDetails getByProductIdAndColor(int id, String color); 
 }

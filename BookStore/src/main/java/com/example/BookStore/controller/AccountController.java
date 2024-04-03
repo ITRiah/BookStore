@@ -2,8 +2,10 @@ package com.example.BookStore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +24,7 @@ public class AccountController {
 	
 	@Autowired
 	AccountService AccountService;
-
+	
 	@PostMapping("/")
 	public ResponseDTO<Void> create(@RequestBody AccountDTO accountDTO) {
 		System.out.println(accountDTO.getUserName() + accountDTO.getPassWord());
@@ -41,7 +43,17 @@ public class AccountController {
 					.status(200)
 					.msg("ok")
 					.build();
-		}
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseDTO<Void> delete(@PathVariable int id) {
+		AccountService.delete(id);
+		
+		return ResponseDTO.<Void>builder()
+				.status(200)
+				.msg("ok")
+				.build();
+	}
 	
 	@GetMapping("/")
 	public ResponseDTO<Page<AccountDTO>> getAll(@RequestBody SearchDTO searchDTO) {

@@ -18,8 +18,12 @@ import org.springframework.stereotype.Service;
 import com.example.BookStore.dto.AccountDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.entity.Account;
+import com.example.BookStore.entity.Cart;
 import com.example.BookStore.entity.Role;
+import com.example.BookStore.entity.User;
 import com.example.BookStore.repo.AccountRepo;
+import com.example.BookStore.repo.CartRepo;
+import com.example.BookStore.repo.UserRepo;
 
 import jakarta.persistence.NoResultException;
 
@@ -39,18 +43,35 @@ public interface AccountService {
 
 		@Autowired
 		AccountRepo accountRepo;
+		
+		@Autowired
+		UserRepo userRepo;
+		
+		@Autowired
+		CartRepo cartRepo;
 
 		@Override
 		public void create(AccountDTO accountDTO) {
 			Account account = new ModelMapper().map(accountDTO, Account.class);
 			account.setPassWord(new BCryptPasswordEncoder().encode(account.getPassWord())); // nên convert khi lưu db
 			accountRepo.save(account);
+			
+			//Tao user
+			User user = new User();
+			user.setAccount(account);
+			userRepo.save(user);
+			
+			//Tao cart chi user
+			Cart cart = new Cart();
+			cart.setUser(user);
+			cartRepo.save(cart);
 		}
 		
 		@Override
 		public void update(AccountDTO accountDTO) {
 			Account accountCurrent = accountRepo.findById(accountDTO.getId()).orElseThrow(NoResultException::new);
 			accountCurrent = new ModelMapper().map(accountDTO, Account.class);
+			accountCurrent.setPassWord(new BCryptPasswordEncoder().encode(accountCurrent.getPassWord())); // nên convert khi lưu db	
 			accountRepo.save(accountCurrent);
 		}
 
@@ -96,8 +117,6 @@ public interface AccountService {
 		@Override
 		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 			Account account = accountRepo.findByUserName(username);
-
-			System.out.println(account.getPassWord());
 
 			if (account != null) {
 				// Tạo list quyền

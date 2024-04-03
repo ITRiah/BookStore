@@ -2,7 +2,6 @@ package com.example.BookStore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,12 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.BookStore.dto.ResponseDTO;
 import com.example.BookStore.dto.CategoryDTO;
+import com.example.BookStore.dto.ResponseDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.service.CategoryService;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/admin/category")
@@ -28,15 +25,7 @@ public class CategoryController {
 	CategoryService CategoryService;
 
 	@PostMapping("/")
-	public ResponseDTO<Void> create(@RequestBody @Valid CategoryDTO CategoryDTO,
-									BindingResult bindingResult) {
-		
-		if(bindingResult.hasErrors()) {
-			return ResponseDTO.<Void>builder()
-					.status(200)
-					.msg(bindingResult.getFieldError() + ":" + bindingResult.getFieldError().getDefaultMessage())
-					.build();
-		}
+	public ResponseDTO<Void> create(@RequestBody CategoryDTO CategoryDTO) {
 		
 		CategoryService.create(CategoryDTO);
 		return ResponseDTO.<Void>builder()
@@ -51,7 +40,7 @@ public class CategoryController {
 		
 		return ResponseDTO.<Void>builder()
 				.status(200)
-				.msg("update success")
+				.msg("ok")
 				.build();
 	}
 	
@@ -69,7 +58,7 @@ public class CategoryController {
 		CategoryService.delete(id);
 		return ResponseDTO.<Void>builder()
 					.status(200)
-					.msg("delete success")
+					.msg("ok")
 					.build();
 	}
 	

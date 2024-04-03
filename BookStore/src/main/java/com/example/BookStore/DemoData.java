@@ -9,9 +9,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.example.BookStore.entity.Account;
+import com.example.BookStore.entity.Cart;
 import com.example.BookStore.entity.Role;
+import com.example.BookStore.entity.User;
 import com.example.BookStore.repo.AccountRepo;
+import com.example.BookStore.repo.CartRepo;
 import com.example.BookStore.repo.RoleRepo;
+import com.example.BookStore.repo.UserRepo;
 
 @Component
 public class DemoData implements ApplicationRunner{
@@ -22,6 +26,12 @@ public class DemoData implements ApplicationRunner{
 	@Autowired 
 	AccountRepo accountRepo;
 	
+	@Autowired
+	UserRepo userRepo;
+	
+	@Autowired
+	CartRepo cartRepo;
+		
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		Role role = new Role();
@@ -38,6 +48,16 @@ public class DemoData implements ApplicationRunner{
 			account.setRoles(Arrays.asList(role));
 			
 			accountRepo.save(account);
+			
+			//Tao user
+			User user = new User();
+			user.setAccount(account);
+			userRepo.save(user);
+			
+			//Tao cart chi user
+			Cart cart = new Cart();
+			cart.setUser(user);
+			cartRepo.save(cart);
 		}
 	}
 

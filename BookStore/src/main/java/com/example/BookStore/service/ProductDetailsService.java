@@ -19,6 +19,7 @@ public interface ProductDetailsService {
 	public void create(ProductDetailsDTO ProductDetailsDTO);
 	public Page<ProductDetailsDTO> getAll(SearchDTO searchDTO);
 	public List<ProductDetailsDTO> findByProductId(int productId);
+	public ProductDetailsDTO findByProductIdAndColor(int productId , String color);
 	
 	@Service
 	public class ProductDetailsServiceImpl implements ProductDetailsService{
@@ -58,6 +59,15 @@ public interface ProductDetailsService {
 			).collect(Collectors.toList());
 			
 			return detailsDTOs;
+		}
+
+		@Override
+		public ProductDetailsDTO findByProductIdAndColor(int productId, String color) {
+			ProductDetails productDetails = ProductDetailsRepo.getByProductIdColor(productId, color);
+			
+			ProductDetailsDTO productDetailsDTO = new ModelMapper().map(productDetails, ProductDetailsDTO.class);
+			
+			return productDetailsDTO;
 		}
 	}
 }

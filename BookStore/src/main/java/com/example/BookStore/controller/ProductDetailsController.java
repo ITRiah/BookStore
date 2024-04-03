@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,10 +40,11 @@ public class ProductDetailsController {
 		
 		if(file != null) {
 			String fileName = file.getOriginalFilename();
-			String filePath = "E:\\Studying\\Java Backend\\Springboot\\BookStore\\src\\main\\java\\com\\example\\BookStore\\image\\product\\"
-					+ fileName;
+			String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
+			String filePath = (	"C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\" + fileName);
+
 			file.transferTo(new File(filePath));
-			ProductDetailsDTO.setImage(filePath);
+			ProductDetailsDTO.setImage(uniqueFileName);
 		}
 		
 		ProductDetailsService.create(ProductDetailsDTO);
@@ -72,8 +74,7 @@ public class ProductDetailsController {
 	@GetMapping("/download")
 	public void download(@RequestParam("fileName") String fileName, HttpServletResponse response) throws IOException {
 		File file = new File(
-				"E:\\Studying\\Java Backend\\Springboot\\BookStore\\src\\main\\java\\com\\example\\BookStore\\image\\product\\"
-						+ fileName);
+				"C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\" + fileName);
 		Files.copy(file.toPath(), response.getOutputStream());// lấy dữ liệu từ file để tải về hình ảnh cho web
 	}
 }

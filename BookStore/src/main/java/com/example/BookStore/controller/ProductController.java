@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,14 +39,15 @@ public class ProductController {
 	public ResponseDTO<Void> create(
 				@ModelAttribute 
 				@Valid ProductDTO ProductDTO) throws IllegalStateException, IOException {
+		
 		MultipartFile file = ProductDTO.getFile();
 		String imageDirectory = "C:\\Users\\Admin\\Desktop\\BookStore\\BookStore\\images\\product\\";
 
 		if(file != null) {
 			String fileName = file.getOriginalFilename();
 			String uniqueFileName =  UUID.randomUUID().toString() + "_" + fileName;
-			Path filePath = Path.of(imageDirectory + uniqueFileName);
-			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+			String filePath = imageDirectory + uniqueFileName;
+			file.transferTo(new File(filePath));
 			ProductDTO.setImage(uniqueFileName);
 		}
 		
@@ -52,6 +55,16 @@ public class ProductController {
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
+					.build();
+	}
+	
+	@PostMapping("/get-by-id/{id}")
+	public ResponseDTO<ProductDTO> getById(@PathVariable int id) {
+		
+		return ResponseDTO.<ProductDTO>builder()
+					.status(200)
+					.msg("ok")
+					.data(ProductService.getById(id))
 					.build();
 	}
 	
@@ -84,6 +97,19 @@ public class ProductController {
 					.data(ProductService.getAll(searchDTO))
 					.build();
 	}
+	
+	@PostMapping("/search-by-name")
+	public ResponseDTO<Page<ProductDTO>> searchByName(@RequestBody SearchDTO searchDTO) {
+		System.out.println(searchDTO.getKeyword());
+		
+		return ResponseDTO.<Page<ProductDTO>>builder()
+				.status(200)
+				.msg("ok")
+				.data(ProductService.searchByName(searchDTO))
+				.build();
+	}
+	
+	
 	
 	
 	@GetMapping("/download")
