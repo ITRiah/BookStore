@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
-public class ProductDetailsDTO {
+public class ProductDetailDTO {
 	private int id;
 	
 	private String color;

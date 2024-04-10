@@ -7,56 +7,56 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.BookStore.dto.BillDetailsDTO;
+import com.example.BookStore.dto.BillDetailDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.entity.Bill;
-import com.example.BookStore.entity.BillDetails;
+import com.example.BookStore.entity.BillDetail;
 import com.example.BookStore.entity.Cart;
-import com.example.BookStore.entity.CartDetails;
-import com.example.BookStore.entity.ProductDetails;
-import com.example.BookStore.repo.BillDetailsRepo;
+import com.example.BookStore.entity.CartDetail;
+import com.example.BookStore.entity.ProductDetail;
+import com.example.BookStore.repo.BillDetailRepo;
 import com.example.BookStore.repo.BillRepo;
-import com.example.BookStore.repo.CartDetailsRepo;
+import com.example.BookStore.repo.CartDetailRepo;
 import com.example.BookStore.repo.CartRepo;
-import com.example.BookStore.repo.ProductDetailsRepo;
+import com.example.BookStore.repo.ProductDetailRepo;
 
-public interface BillDetailsService {
-	public void create(BillDetailsDTO BillDetailsDTO);
-	public Page<BillDetailsDTO> getAll(SearchDTO searchDTO);
+public interface BillDetailService {
+	public void create(BillDetailDTO BillDetailsDTO);
+	public Page<BillDetailDTO> getAll(SearchDTO searchDTO);
 	
 	@Service
-	public class BillDetailsServiceImpl implements BillDetailsService{
+	public class BillDetailsServiceImpl implements BillDetailService{
 		
 		@Autowired
-		BillDetailsRepo BillDetailsRepo;
+		BillDetailRepo billDetailsRepo;
 		
 		@Autowired
 		BillRepo billRepo;
 		
 		@Autowired
-		ProductDetailsRepo productDetailsRepo;
+		ProductDetailRepo productDetailsRepo;
 				
 		@Autowired
-		CartDetailsRepo cartDetailsRepo;
+		CartDetailRepo cartDetailsRepo;
 		
 		@Autowired
-		CartDetailsService cartDetailsService;
+		CartDetailService cartDetailsService;
 		
 		@Override
-		public void create(BillDetailsDTO BillDetailsDTO) {
+		public void create(BillDetailDTO BillDetailsDTO) {
 			
 			//update product
 			int productId = BillDetailsDTO.getProduct().getId();
 			String color = BillDetailsDTO.getColor();
 						
-			ProductDetails productDetails = productDetailsRepo.getByProductIdColor(productId, color);
+			ProductDetail productDetails = productDetailsRepo.getByProductIdColor(productId, color);
 			productDetails.setQuantity(productDetails.getQuantity() - BillDetailsDTO.getQuantity());
 			productDetailsRepo.save(productDetails);
 			
 			//update billDetails
 			BillDetailsDTO.setTotalPrice(BillDetailsDTO.getQuantity() * productDetails.getPrice());
-			BillDetails BillDetails = new ModelMapper().map(BillDetailsDTO, BillDetails.class);
-			BillDetailsRepo.save(BillDetails);	
+			BillDetail BillDetails = new ModelMapper().map(BillDetailsDTO, BillDetail.class);
+			billDetailsRepo.save(BillDetails);	
 						
 			//update bill
 			int billId = BillDetailsDTO.getBill().getId();
@@ -65,12 +65,12 @@ public interface BillDetailsService {
 			billRepo.save(bill);
 			
 			//delete cartDetails
-			CartDetails cartDetails = cartDetailsRepo.getByProductIdAndColor(productId, color);
+			CartDetail cartDetails = cartDetailsRepo.getByProductIdAndColor(productId, color);
 			cartDetailsService.delete(cartDetails.getId());
 		}
 
 		@Override
-		public Page<BillDetailsDTO> getAll(SearchDTO searchDTO) {
+		public Page<BillDetailDTO> getAll(SearchDTO searchDTO) {
 			
 			int currentPage = searchDTO.getCurrentPage() == null ? 0 : searchDTO.getCurrentPage()  ;
 			int size = searchDTO.getSize() == null ? 5 : searchDTO.getSize();
@@ -79,9 +79,9 @@ public interface BillDetailsService {
 			Sort sort = Sort.by(sortField).ascending();
 			
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<BillDetails> page = BillDetailsRepo.findAll(pageRequest);
+			Page<BillDetail> page = billDetailsRepo.findAll(pageRequest);
 			
-			Page<BillDetailsDTO> page2 =  page.map(BillDetails -> new ModelMapper().map(BillDetails, BillDetailsDTO.class));
+			Page<BillDetailDTO> page2 =  page.map(BillDetails -> new ModelMapper().map(BillDetails, BillDetailDTO.class));
 			
 			return page2;
 		}

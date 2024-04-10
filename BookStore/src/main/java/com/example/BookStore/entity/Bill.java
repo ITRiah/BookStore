@@ -30,7 +30,7 @@ public class Bill extends TimeAuditable {
 	private User user;
 	
 	@OneToMany(mappedBy = "bill", cascade = CascadeType.REMOVE)// mappedBy
-	private List<BillDetails> billDetails;
+	private List<BillDetail> billDetails;
 	
 	@LastModifiedDate
 	private Date receiveAt; //

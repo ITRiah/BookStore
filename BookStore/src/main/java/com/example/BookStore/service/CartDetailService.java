@@ -10,30 +10,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.BookStore.dto.CartDetailsDTO;
+import com.example.BookStore.dto.CartDetailDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.entity.Cart;
-import com.example.BookStore.entity.CartDetails;
+import com.example.BookStore.entity.CartDetail;
 import com.example.BookStore.entity.Product;
-import com.example.BookStore.repo.CartDetailsRepo;
+import com.example.BookStore.repo.CartDetailRepo;
 import com.example.BookStore.repo.CartRepo;
 import com.example.BookStore.repo.ProductRepo;
 
-public interface CartDetailsService {
-	public void create(CartDetailsDTO CartDetailsDTO);
-	public void update(CartDetailsDTO CartDetailsDTO);
+public interface CartDetailService {
+	public void create(CartDetailDTO CartDetailsDTO);
+	public void update(CartDetailDTO CartDetailsDTO);
 	public void delete(int id);
-	public CartDetailsDTO findByProductIdAndColor(int id, String color);
+	public CartDetailDTO findByProductIdAndColor(int id, String color);
 
-	public Page<CartDetailsDTO> getAll(SearchDTO searchDTO);
-	public List<CartDetailsDTO> findByProductId(int productId);
+	public Page<CartDetailDTO> getAll(SearchDTO searchDTO);
+	public List<CartDetailDTO> findByProductId(int productId);
 
 	
 	@Service
-	public class CartDetailsServiceImpl implements CartDetailsService{
+	public class CartDetailsServiceImpl implements CartDetailService{
 		
 		@Autowired
-		CartDetailsRepo CartDetailsRepo;
+		CartDetailRepo cartDetailsRepo;
 		
 		@Autowired
 		CartRepo cartRepo;
@@ -41,22 +41,19 @@ public interface CartDetailsService {
 		@Autowired
 		ProductRepo productRepo;
 		
-		@Autowired
-		CartDetailsRepo cartDetailsRepo;
-		
 		@Override
-		public void create(CartDetailsDTO CartDetailsDTO) {
+		public void create(CartDetailDTO CartDetailsDTO) {
 			//Nếu sản phẩm đã tồn tại thì là số lượng thêm mới, còn không là số lượng được khởi tạo ban đầu
 			int extraQuantity = CartDetailsDTO.getQuantity();
 			
-			CartDetails cartDetails = new CartDetails();
+			CartDetail cartDetails = new CartDetail();
 			cartDetails = cartDetailsRepo.getByProductIdAndColor(CartDetailsDTO.getProduct().getId(), CartDetailsDTO.getColor());			
 			
 			//Nếu exist sản phẩm -> tăng số lượng
 			if(cartDetails != null) {
 				cartDetails.setQuantity(cartDetails.getQuantity() + extraQuantity);
 			}else {
-				cartDetails = new ModelMapper().map(CartDetailsDTO, CartDetails.class);
+				cartDetails = new ModelMapper().map(CartDetailsDTO, CartDetail.class);
 			}			
 			
 			//Get cart
@@ -71,7 +68,7 @@ public interface CartDetailsService {
 			cartDetails.setTotalAmount(totalAmount);
 			
 			//save to cartDetails
-			CartDetailsRepo.save(cartDetails);
+			cartDetailsRepo.save(cartDetails);
 			
 			//update cart
 			//Chỉ cộng thêm lượng mới
@@ -84,7 +81,7 @@ public interface CartDetailsService {
 		
 
 		@Override
-		public Page<CartDetailsDTO> getAll(SearchDTO searchDTO) {
+		public Page<CartDetailDTO> getAll(SearchDTO searchDTO) {
 			
 			int currentPage = searchDTO.getCurrentPage() == null ? 0 : searchDTO.getCurrentPage()  ;
 			int size = searchDTO.getSize() == null ? 5 : searchDTO.getSize();
@@ -93,32 +90,32 @@ public interface CartDetailsService {
 			Sort sort = Sort.by(sortField).ascending();
 			
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<CartDetails> page = CartDetailsRepo.findAll(pageRequest);
+			Page<CartDetail> page = cartDetailsRepo.findAll(pageRequest);
 			
-			Page<CartDetailsDTO> page2 =  page.map(CartDetails -> new ModelMapper().map(CartDetails, CartDetailsDTO.class));
+			Page<CartDetailDTO> page2 =  page.map(CartDetails -> new ModelMapper().map(CartDetails, CartDetailDTO.class));
 			
 			return page2;
 		}
 		
 		@Override
-		public List<CartDetailsDTO> findByProductId(int productId) {
-			List<CartDetails> details = cartDetailsRepo.getByProductId(productId);
+		public List<CartDetailDTO> findByProductId(int productId) {
+			List<CartDetail> details = cartDetailsRepo.getByProductId(productId);
 
-			List<CartDetailsDTO> detailsDTOs = details.stream().map(
-					cartDetails -> new ModelMapper().map(cartDetails, CartDetailsDTO.class)
+			List<CartDetailDTO> detailsDTOs = details.stream().map(
+					cartDetails -> new ModelMapper().map(cartDetails, CartDetailDTO.class)
 			).collect(Collectors.toList());
 			
 			return detailsDTOs;
 		}
 		
 		@Override
-		public void update(CartDetailsDTO CartDetailsDTO) {
+		public void update(CartDetailDTO CartDetailsDTO) {
 			int quantityUpdate = CartDetailsDTO.getQuantity();
 			int quantityCurrent = 0;
 			int idCartDetails = CartDetailsDTO.getId();
 			
 			//update quantity
-			CartDetails cartDetails = cartDetailsRepo.getById(idCartDetails);
+			CartDetail cartDetails = cartDetailsRepo.getById(idCartDetails);
 			quantityCurrent = cartDetails.getQuantity();
 			cartDetails.setQuantity(quantityUpdate);
 			
@@ -130,7 +127,7 @@ public interface CartDetailsService {
 			CartDetailsDTO.setTotalAmount(totalAmount);
 			
 			//save to cartDetails
-			CartDetailsRepo.save(cartDetails);
+			cartDetailsRepo.save(cartDetails);
 			
 			//Get cart by cardId
 			int cartId = cartDetails.getCart().getId();
@@ -156,7 +153,7 @@ public interface CartDetailsService {
 		public void delete(int id) {
 			
 			//get CartDetails
-			CartDetails cartDetails = cartDetailsRepo.getById(id);
+			CartDetail cartDetails = cartDetailsRepo.getById(id);
 			
 			//Get cart
 			int cartId = cartDetails.getCart().getId();
@@ -178,9 +175,9 @@ public interface CartDetailsService {
 
 
 		@Override
-		public CartDetailsDTO findByProductIdAndColor(int id, String color) {
-			CartDetails cartDetails = cartDetailsRepo.getByProductIdAndColor(id, color);
-			CartDetailsDTO cartDetailsDTO =  new ModelMapper().map(cartDetails, CartDetailsDTO.class);
+		public CartDetailDTO findByProductIdAndColor(int id, String color) {
+			CartDetail cartDetails = cartDetailsRepo.getByProductIdAndColor(id, color);
+			CartDetailDTO cartDetailsDTO =  new ModelMapper().map(cartDetails, CartDetailDTO.class);
 			return cartDetailsDTO;
 		}
 	}

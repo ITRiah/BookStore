@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
 public class ProductController {
 	
 	@Autowired
-	ProductService ProductService;
+	ProductService productService;
 	
 	@Value("${upload.folder}product/")
 	private String UPLOAD_FOLDER;
@@ -57,7 +57,7 @@ public class ProductController {
 			ProductDTO.setImage(uniqueFileName);
 		}
 		
-		ProductService.create(ProductDTO);
+		productService.create(ProductDTO);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -70,7 +70,7 @@ public class ProductController {
 		return ResponseDTO.<ProductDTO>builder()
 					.status(200)
 					.msg("ok")
-					.data(ProductService.getById(id))
+					.data(productService.getById(id))
 					.build();
 	}
 	
@@ -90,7 +90,7 @@ public class ProductController {
 			productDTO.setImage(uniqueFileName);
 		}
 		
-		ProductService.update(productDTO);
+		productService.update(productDTO);
 		
 		return ResponseDTO.<Void>builder()
 			.status(200)
@@ -103,7 +103,7 @@ public class ProductController {
 		return ResponseDTO.<Page<ProductDTO>>builder()
 					.status(200)
 					.msg("ok")
-					.data(ProductService.getAll(searchDTO))
+					.data(productService.getAll(searchDTO))
 					.build();
 	}
 	
@@ -114,7 +114,7 @@ public class ProductController {
 		return ResponseDTO.<Page<ProductDTO>>builder()
 				.status(200)
 				.msg("ok")
-				.data(ProductService.searchByName(searchDTO))
+				.data(productService.searchByName(searchDTO))
 				.build();
 	}
 	

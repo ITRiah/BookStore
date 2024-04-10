@@ -25,32 +25,32 @@ public interface CategoryService {
 	public class CategoryServiceImpl implements CategoryService{
 		
 		@Autowired
-		CategoryRepo CategoryRepo;
+		CategoryRepo categoryRepo;
 
 		@Override
 		public void create(CategoryDTO CategoryDTO) {
 			Category Category = new ModelMapper().map(CategoryDTO, Category.class);
-			CategoryRepo.save(Category);
+			categoryRepo.save(Category);
 		}
 		
 		@Override
 		public void update(CategoryDTO categoryDTO) {
 			// TODO Auto-generated method stub
-			Category categoryCurrent = CategoryRepo.findById(categoryDTO.getId()).orElseThrow( NoResultException :: new);
+			Category categoryCurrent = categoryRepo.findById(categoryDTO.getId()).orElseThrow( NoResultException :: new);
 			categoryCurrent.setName(categoryDTO.getName());
-			CategoryRepo.save(categoryCurrent);	
+			categoryRepo.save(categoryCurrent);	
 		}
 		
 		@Override
 		public CategoryDTO getById(int id) {
-			Category category = CategoryRepo.getById(id);
+			Category category = categoryRepo.getById(id);
 			CategoryDTO categoryDTO = new ModelMapper().map(category, CategoryDTO.class);
 			return categoryDTO;
 		}
 		
 		@Override
 		public void delete(int id) {
-			CategoryRepo.deleteById(id);
+			categoryRepo.deleteById(id);
 		}	
 
 		@Override
@@ -63,7 +63,7 @@ public interface CategoryService {
 			Sort sort = Sort.by(sortField).ascending();
 			
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<Category> page = CategoryRepo.findAll(pageRequest);
+			Page<Category> page = categoryRepo.findAll(pageRequest);
 			
 			Page<CategoryDTO> page2 =  page.map(Category -> new ModelMapper().map(Category, CategoryDTO.class));
 			

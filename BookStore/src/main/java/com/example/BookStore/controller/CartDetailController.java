@@ -12,30 +12,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.BookStore.dto.CartDetailsDTO;
-import com.example.BookStore.dto.ProductDetailsDTO;
+import com.example.BookStore.dto.CartDetailDTO;
+import com.example.BookStore.dto.ProductDetailDTO;
 import com.example.BookStore.dto.ResponseDTO;
 import com.example.BookStore.dto.SearchDTO;
-import com.example.BookStore.service.CartDetailsService;
-import com.example.BookStore.service.ProductDetailsService;
+import com.example.BookStore.service.CartDetailService;
+import com.example.BookStore.service.ProductDetailService;
 
 @RestController
 @RequestMapping("/member/cart-details")
-public class CartDetailsController {
+public class CartDetailController {
 	
 	@Autowired
-	CartDetailsService CartDetailsService;
+	CartDetailService cartDetailsService;
 	
 	@Autowired
-	ProductDetailsService detailsService;
+	ProductDetailService detailsService;
 
 	@PostMapping("/")
-	public ResponseDTO<Void> create(@RequestBody CartDetailsDTO CartDetailsDTO) {
+	public ResponseDTO<Void> create(@RequestBody CartDetailDTO CartDetailsDTO) {
 		String color = CartDetailsDTO.getColor();
 		int productId = CartDetailsDTO.getProduct().getId();
 		
 		
-		ProductDetailsDTO productDetailsDTO = detailsService.findByProductIdAndColor(productId, color);
+		ProductDetailDTO productDetailsDTO = detailsService.findByProductIdAndColor(productId, color);
 		
 		if(productDetailsDTO != null) {
 			if(productDetailsDTO.getQuantity() < CartDetailsDTO.getQuantity()) {
@@ -46,7 +46,7 @@ public class CartDetailsController {
 			}
 		}
 		
-		CartDetailsService.create(CartDetailsDTO);
+		cartDetailsService.create(CartDetailsDTO);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -54,8 +54,8 @@ public class CartDetailsController {
 	}
 	
 	@PutMapping("/")
-	public ResponseDTO<Void> update(@RequestBody CartDetailsDTO cartDetailsDTO){
-		CartDetailsService.update(cartDetailsDTO);
+	public ResponseDTO<Void> update(@RequestBody CartDetailDTO cartDetailsDTO){
+		cartDetailsService.update(cartDetailsDTO);
 		
 		return ResponseDTO.<Void>builder()
 				.status(200)
@@ -65,7 +65,7 @@ public class CartDetailsController {
 	
 	@DeleteMapping("/{id}")
 	public ResponseDTO<Void> update(@PathVariable int id){
-		CartDetailsService.delete(id);
+		cartDetailsService.delete(id);
 		
 		return ResponseDTO.<Void>builder()
 				.status(200)
@@ -75,11 +75,11 @@ public class CartDetailsController {
 	
 	
 	@GetMapping("/")
-	public ResponseDTO<Page<CartDetailsDTO>> getAll(@ModelAttribute SearchDTO searchDTO) {
-		return ResponseDTO.<Page<CartDetailsDTO>>builder()
+	public ResponseDTO<Page<CartDetailDTO>> getAll(@ModelAttribute SearchDTO searchDTO) {
+		return ResponseDTO.<Page<CartDetailDTO>>builder()
 					.status(200)
 					.msg("ok")
-					.data(CartDetailsService.getAll(searchDTO))
+					.data(cartDetailsService.getAll(searchDTO))
 					.build();
 	}
 }

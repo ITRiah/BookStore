@@ -28,24 +28,24 @@ public interface ProductService {
 	public class ProductServiceImpl implements ProductService{
 		
 		@Autowired
-		ProductRepo ProductRepo;
+		ProductRepo productRepo;
 
 		@Override
 		public void create(ProductDTO ProductDTO) {
 			Product Product = new ModelMapper().map(ProductDTO, Product.class);
-			ProductRepo.save(Product);
+			productRepo.save(Product);
 		}
 		
 		@Override
 		public void update(ProductDTO productDTO) {
-			Product productCurrent = ProductRepo.getById(productDTO.getId());
+			Product productCurrent = productRepo.getById(productDTO.getId());
 			productCurrent = new ModelMapper().map(productDTO, Product.class);
-			ProductRepo.save(productCurrent);
+			productRepo.save(productCurrent);
 		}
 		
 		@Override
 		public ProductDTO getById(int id) {
-			Product product = ProductRepo.findById(id).orElseThrow(NoResultException::new);
+			Product product = productRepo.findById(id).orElseThrow(NoResultException::new);
 			ProductDTO productDTO = new ModelMapper().map(product, ProductDTO.class);
 			return productDTO;
 		}		
@@ -60,7 +60,7 @@ public interface ProductService {
 			Sort sort = Sort.by(sortField).ascending();
 			
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<Product> page = ProductRepo.findAll(pageRequest);
+			Page<Product> page = productRepo.findAll(pageRequest);
 			
 			Page<ProductDTO> page2 =  page.map(Product -> new ModelMapper().map(Product, ProductDTO.class));
 			
@@ -77,7 +77,7 @@ public interface ProductService {
 			Sort sort = Sort.by(sortField).ascending();
 			
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<Product> page = ProductRepo.searchByName("%" + name + "%", pageRequest);
+			Page<Product> page = productRepo.searchByName("%" + name + "%", pageRequest);
 			
 			Page<ProductDTO> page2 = page.map(product -> new ModelMapper().map(product, ProductDTO.class));
 			

@@ -20,12 +20,12 @@ public interface CartService {
 	public class CartServiceImpl implements CartService{
 		
 		@Autowired
-		CartRepo CartRepo;
+		CartRepo cartRepo;
 
 		@Override
 		public void create(CartDTO CartDTO) {
 			Cart Cart = new ModelMapper().map(CartDTO, Cart.class);
-			CartRepo.save(Cart);
+			cartRepo.save(Cart);
 		}
 
 		@Override
@@ -38,7 +38,7 @@ public interface CartService {
 			Sort sort = Sort.by(sortField).ascending();
 			
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<Cart> page = CartRepo.findAll(pageRequest);
+			Page<Cart> page = cartRepo.findAll(pageRequest);
 			
 			Page<CartDTO> page2 =  page.map(Cart -> new ModelMapper().map(Cart, CartDTO.class));
 			

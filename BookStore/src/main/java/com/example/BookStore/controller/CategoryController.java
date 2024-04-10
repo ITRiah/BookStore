@@ -24,12 +24,12 @@ import jakarta.validation.Valid;
 public class CategoryController {
 	
 	@Autowired
-	CategoryService CategoryService;
+	CategoryService categoryService;
 
 	@PostMapping("/")
 	public ResponseDTO<Void> create(@RequestBody @Valid CategoryDTO CategoryDTO) {
 		
-		CategoryService.create(CategoryDTO);
+		categoryService.create(CategoryDTO);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -38,7 +38,7 @@ public class CategoryController {
 	
 	@PutMapping("/")
 	public ResponseDTO<Void> update(@RequestBody CategoryDTO categoryDTO) {
-		CategoryService.update(categoryDTO);
+		categoryService.update(categoryDTO);
 		
 		return ResponseDTO.<Void>builder()
 				.status(200)
@@ -51,13 +51,13 @@ public class CategoryController {
 		return ResponseDTO.<CategoryDTO>builder()
 					.status(200)
 					.msg("ok")
-					.data(CategoryService.getById(id))
+					.data(categoryService.getById(id))
 					.build();
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseDTO<Void> delete(@PathVariable int id){
-		CategoryService.delete(id);
+		categoryService.delete(id);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -69,7 +69,7 @@ public class CategoryController {
 		return ResponseDTO.<Page<CategoryDTO>>builder()
 					.status(200)
 					.msg("ok")
-					.data(CategoryService.getAll(searchDTO))
+					.data(categoryService.getAll(searchDTO))
 					.build();
 	}
 }

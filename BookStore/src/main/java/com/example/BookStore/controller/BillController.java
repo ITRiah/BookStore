@@ -24,11 +24,11 @@ import com.example.BookStore.service.BillService;
 public class BillController {
 	
 	@Autowired
-	BillService BillService;
+	BillService billService;
 
 	@PostMapping("/")
 	public ResponseDTO<Void> create(@RequestBody BillDTO BillDTO) {
-		BillService.create(BillDTO);
+		billService.create(BillDTO);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -40,7 +40,7 @@ public class BillController {
 						@RequestParam int id,
 						@RequestParam String status) {
 		
-		BillService.updateStatus(status, id);
+		billService.updateStatus(status, id);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -49,7 +49,7 @@ public class BillController {
 	
 	@DeleteMapping("/{id}")
 	public ResponseDTO<Void> delete(@PathVariable int id) {
-		BillDTO billDTO = BillService.getById(id);
+		BillDTO billDTO = billService.getById(id);
 		
 		if(!billDTO.getStatus().equals("Chờ duyệt")) {
 			return ResponseDTO.<Void>builder()
@@ -57,7 +57,7 @@ public class BillController {
 					.msg("Status of Bill must be Loading")
 					.build();
 		}else {
-			BillService.delete(id);
+			billService.delete(id);
 			return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -70,7 +70,7 @@ public class BillController {
 		return ResponseDTO.<Page<BillDTO>>builder()
 					.status(200)
 					.msg("ok")
-					.data(BillService.getAll(searchDTO))
+					.data(billService.getAll(searchDTO))
 					.build();
 	}
 	
@@ -80,7 +80,7 @@ public class BillController {
 		return ResponseDTO.<List<BillDTO>>builder()
 					.status(200)
 					.msg("ok")
-					.data(BillService.getByUserId(id))
+					.data(billService.getByUserId(id))
 					.build();
 	}	
 }

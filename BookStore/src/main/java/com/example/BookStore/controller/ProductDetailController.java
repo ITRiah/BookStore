@@ -19,20 +19,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.BookStore.dto.ProductDetailsDTO;
+import com.example.BookStore.dto.ProductDetailDTO;
 import com.example.BookStore.dto.ResponseDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.repo.ProductRepo;
-import com.example.BookStore.service.ProductDetailsService;
+import com.example.BookStore.service.ProductDetailService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/admin/product-details")
-public class ProductDetailsController {
+public class ProductDetailController {
 
 	@Autowired
-	ProductDetailsService ProductDetailsService;
+	ProductDetailService productDetailsService;
 	
 	@Autowired
 	ProductRepo productRepo;
@@ -41,7 +41,7 @@ public class ProductDetailsController {
 	private String UPLOAD_FOLDER;
 
 	@PostMapping("/")
-	public ResponseDTO<Void> create(@ModelAttribute ProductDetailsDTO ProductDetailsDTO) throws IllegalStateException, IOException {
+	public ResponseDTO<Void> create(@ModelAttribute ProductDetailDTO ProductDetailsDTO) throws IllegalStateException, IOException {
 		if(!(new File(UPLOAD_FOLDER).exists())) {
 			new File(UPLOAD_FOLDER).mkdirs();
 		}
@@ -57,7 +57,7 @@ public class ProductDetailsController {
 			ProductDetailsDTO.setImage(uniqueFileName);
 		}
 		
-		ProductDetailsService.create(ProductDetailsDTO);
+		productDetailsService.create(ProductDetailsDTO);
 		return ResponseDTO.<Void>builder()
 				.status(200)
 				.msg("ok")
@@ -66,7 +66,7 @@ public class ProductDetailsController {
 	}
 	
 	@PutMapping("/")
-	public ResponseDTO<Void> update(@ModelAttribute ProductDetailsDTO ProductDetailsDTO) throws IllegalStateException, IOException {
+	public ResponseDTO<Void> update(@ModelAttribute ProductDetailDTO ProductDetailsDTO) throws IllegalStateException, IOException {
 		if(!(new File(UPLOAD_FOLDER).exists())) {
 			new File(UPLOAD_FOLDER).mkdirs();
 		}
@@ -85,7 +85,7 @@ public class ProductDetailsController {
 			ProductDetailsDTO.setImage(uniqueFileName);
 		}
 		
-		ProductDetailsService.update(ProductDetailsDTO);
+		productDetailsService.update(ProductDetailsDTO);
 		return ResponseDTO.<Void>builder()
 				.status(200)
 				.msg("ok")
@@ -93,17 +93,17 @@ public class ProductDetailsController {
 
 	}
 	@GetMapping("/")
-	public ResponseDTO<Page<ProductDetailsDTO>> getAll(@RequestBody SearchDTO searchDTO) {
-		return ResponseDTO.<Page<ProductDetailsDTO>>builder().status(200).msg("ok")
-				.data(ProductDetailsService.getAll(searchDTO)).build();
+	public ResponseDTO<Page<ProductDetailDTO>> getAll(@RequestBody SearchDTO searchDTO) {
+		return ResponseDTO.<Page<ProductDetailDTO>>builder().status(200).msg("ok")
+				.data(productDetailsService.getAll(searchDTO)).build();
 	}
 	
 	@GetMapping("/get-by-product-id")
-	public ResponseDTO<List<ProductDetailsDTO>> getByProductId(@RequestParam("id") int id) {
-		return ResponseDTO.<List<ProductDetailsDTO>>builder()
+	public ResponseDTO<List<ProductDetailDTO>> getByProductId(@RequestParam("id") int id) {
+		return ResponseDTO.<List<ProductDetailDTO>>builder()
 				.status(200)
 				.msg("ok")
-				.data(ProductDetailsService.findByProductId(id))
+				.data(productDetailsService.findByProductId(id))
 				.build();
 	}
 

@@ -21,11 +21,11 @@ import com.example.BookStore.service.AccountService;
 public class AccountController {
 	
 	@Autowired
-	AccountService AccountService;
+	AccountService accountService;
 	
 	@PostMapping("/register/")
 	public ResponseDTO<Void> create(@RequestBody AccountDTO accountDTO) {		
-		AccountService.create(accountDTO);
+		accountService.create(accountDTO);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -36,14 +36,14 @@ public class AccountController {
 	public ResponseDTO<Void> forgotPassword(
 			@RequestParam("username") String username) {
 				
-		if(AccountService.findByUsername(username) == null) {
+		if(accountService.findByUsername(username) == null) {
 			return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("Username is not exists")
 					.build();
 		}
 		
-		AccountService.forgotPassword(username);
+		accountService.forgotPassword(username);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("Password is sent your email")
@@ -55,7 +55,7 @@ public class AccountController {
 			@RequestParam("password") String password,
 			@RequestParam("username") String username) {
 		
-		AccountService.resetPassword(username, password);
+		accountService.resetPassword(username, password);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -64,7 +64,7 @@ public class AccountController {
 	
 	@PutMapping("/account/")
 	public ResponseDTO<Void> update(@RequestBody AccountDTO accountDTO) {
-		AccountService.update(accountDTO);
+		accountService.update(accountDTO);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -74,7 +74,7 @@ public class AccountController {
 	
 	@DeleteMapping("/account/{id}")
 	public ResponseDTO<Void> delete(@PathVariable int id) {
-		AccountService.delete(id);
+		accountService.delete(id);
 		
 		return ResponseDTO.<Void>builder()
 				.status(200)
@@ -88,7 +88,7 @@ public class AccountController {
 		return ResponseDTO.<Page<AccountDTO>>builder()
 					.status(200)
 					.msg("ok")
-					.data(AccountService.getAll(searchDTO))
+					.data(accountService.getAll(searchDTO))
 					.build();
 	}
 	
@@ -100,7 +100,7 @@ public class AccountController {
 		return ResponseDTO.<Page<AccountDTO>>builder()
 				.status(200)
 				.msg("ok")
-				.data(AccountService.search(searchDTO))
+				.data(accountService.search(searchDTO))
 				.build(); 
 	}
 }

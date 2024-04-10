@@ -24,5 +24,5 @@ public class BillDTO{
 	private Date receiveAt;
 	
 	@JsonIgnoreProperties("bill") 
-	private List<BillDetailsDTO> billDetails;
+	private List<BillDetailDTO> billDetails;
 }

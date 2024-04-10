@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.example.BookStore.entity.BillDetails;
+import com.example.BookStore.entity.BillDetail;
 
 
-public interface BillDetailsRepo extends JpaRepository<BillDetails, Integer> {
-	Page<BillDetails> findAll(Pageable pageable);
+public interface BillDetailRepo extends JpaRepository<BillDetail, Integer> {
+	Page<BillDetail> findAll(Pageable pageable);
 	
-	@Query("SELECT b FROM BillDetails b WHERE b.bill.id = :id")
-	List<BillDetails> findByBillId(int id);
+	@Query("SELECT b FROM BillDetail b WHERE b.bill.id = :id")
+	List<BillDetail> findByBillId(int id);
 }

@@ -1,6 +1,5 @@
 package com.example.BookStore.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,20 +9,18 @@ import lombok.Data;
 
 @Data
 @Entity
-public class CartDetails {
+public class BillDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	private String color;
 	private int quantity;
+	private String color;
+	private double totalPrice;
 	
-	//Thanh tien
-	private double totalAmount;
+	@ManyToOne
+	private Bill bill;
 	
 	@ManyToOne
 	private Product product;
-	
-	@ManyToOne
-	private Cart cart;
 }

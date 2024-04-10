@@ -15,11 +15,11 @@ import com.example.BookStore.dto.BillDTO;
 import com.example.BookStore.dto.SearchDTO;
 import com.example.BookStore.dto.StatisticDTO;
 import com.example.BookStore.entity.Bill;
-import com.example.BookStore.entity.BillDetails;
-import com.example.BookStore.entity.ProductDetails;
-import com.example.BookStore.repo.BillDetailsRepo;
+import com.example.BookStore.entity.BillDetail;
+import com.example.BookStore.entity.ProductDetail;
+import com.example.BookStore.repo.BillDetailRepo;
 import com.example.BookStore.repo.BillRepo;
-import com.example.BookStore.repo.ProductDetailsRepo;
+import com.example.BookStore.repo.ProductDetailRepo;
 import com.example.BookStore.repo.ProductRepo;
 
 import jakarta.persistence.NoResultException;
@@ -45,40 +45,40 @@ public interface BillService {
 	public class BillServiceImpl implements BillService {
 
 		@Autowired
-		BillRepo BillRepo;
+		BillRepo billRepo;
 
 		@Autowired
-		BillDetailsRepo billDetailsRepo;
+		BillDetailRepo billDetailRepo;
 
 		@Autowired
 		ProductRepo productRepo;
 
 		@Autowired
-		ProductDetailsRepo productDetailsRepo;
+		ProductDetailRepo productDetailsRepo;
 
 		@Override
 		public void create(BillDTO BillDTO) {
 			Bill Bill = new ModelMapper().map(BillDTO, Bill.class);
-			BillRepo.save(Bill);
+			billRepo.save(Bill);
 		}
 		
 		@Override
 		public void updateStatus(String status, int id) {
-			Bill billCurrent = BillRepo.getById(id);
+			Bill billCurrent = billRepo.getById(id);
 			if(billCurrent != null) {
 				billCurrent.setStatus(status);
-				BillRepo.save(billCurrent);
+				billRepo.save(billCurrent);
 			}
 		}
 
 		@Override
 		@Transactional
 		public void delete(int id) {
-			List<BillDetails> billDetails = billDetailsRepo.findByBillId(id);
+			List<BillDetail> billDetails = billDetailRepo.findByBillId(id);
 
 			// update product (quantity)
-			for (BillDetails b : billDetails) {
-				ProductDetails productDetails = productDetailsRepo.getByProductIdColor(b.getProduct().getId(),
+			for (BillDetail b : billDetails) {
+				ProductDetail productDetails = productDetailsRepo.getByProductIdColor(b.getProduct().getId(),
 						b.getColor());
 				productDetails.setQuantity(productDetails.getQuantity() + b.getQuantity());
 				productDetailsRepo.save(productDetails);
@@ -88,7 +88,7 @@ public interface BillService {
 //				billDetailsRepo.delete(billDetails2);
 //			}
 
-			BillRepo.deleteById(id);
+			billRepo.deleteById(id);
 		}
 
 		@Override
@@ -101,7 +101,7 @@ public interface BillService {
 			Sort sort = Sort.by(sortField).ascending();
 
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<Bill> page = BillRepo.findAll(pageRequest);
+			Page<Bill> page = billRepo.findAll(pageRequest);
 
 			Page<BillDTO> page2 = page.map(Bill -> new ModelMapper().map(Bill, BillDTO.class));
 
@@ -118,7 +118,7 @@ public interface BillService {
 			Sort sort = Sort.by(sortField).ascending();
 
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<Bill> page = BillRepo.findByStatus(status, pageRequest);
+			Page<Bill> page = billRepo.findByStatus(status, pageRequest);
 
 			Page<BillDTO> page2 = page.map(Bill -> new ModelMapper().map(Bill, BillDTO.class));
 
@@ -127,14 +127,14 @@ public interface BillService {
 
 		@Override
 		public BillDTO getById(int id) {
-			Bill bill = BillRepo.findById(id).orElseThrow(NoResultException::new);
+			Bill bill = billRepo.findById(id).orElseThrow(NoResultException::new);
 			BillDTO billDTO = new ModelMapper().map(bill, BillDTO.class);
 			return billDTO;
 		}
 
 		@Override
 		public List<BillDTO> getByUserId(int id) {
-			List<Bill> bills = BillRepo.getByUserId(id);
+			List<Bill> bills = billRepo.getByUserId(id);
 
 			List<BillDTO> billDTOs = bills.stream().map(bill -> new ModelMapper().map(bill, BillDTO.class))
 					.collect(Collectors.toList());
@@ -150,7 +150,7 @@ public interface BillService {
 			Sort sort = Sort.by(sortField).ascending();
 
 			PageRequest pageRequest = PageRequest.of(currentPage, size, sort);
-			Page<Bill> page = BillRepo.searchByDate(statisticDTO.getFrom(), statisticDTO.getTo(), pageRequest);
+			Page<Bill> page = billRepo.searchByDate(statisticDTO.getFrom(), statisticDTO.getTo(), pageRequest);
 
 			Page<BillDTO> page2 = page.map(Bill -> new ModelMapper().map(Bill, BillDTO.class));
 

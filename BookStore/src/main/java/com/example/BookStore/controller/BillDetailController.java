@@ -11,27 +11,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.BookStore.dto.BillDetailsDTO;
-import com.example.BookStore.dto.CartDetailsDTO;
+import com.example.BookStore.dto.BillDetailDTO;
+import com.example.BookStore.dto.CartDetailDTO;
 import com.example.BookStore.dto.ResponseDTO;
 import com.example.BookStore.dto.SearchDTO;
-import com.example.BookStore.service.BillDetailsService;
-import com.example.BookStore.service.CartDetailsService;
+import com.example.BookStore.service.BillDetailService;
+import com.example.BookStore.service.CartDetailService;
 
 @RestController
 @RequestMapping("/member/bill-details")
-public class BillDetailsController {
+public class BillDetailController {
 	
 	@Autowired
-	BillDetailsService BillDetailsService;
+	BillDetailService billDetailsService;
 	
 	@Autowired
-	CartDetailsService cartDetailsService;
+	CartDetailService cartDetailsService;
 
 	@PostMapping("/")
-	public ResponseDTO<Void> create(@RequestBody BillDetailsDTO BillDetailsDTO) {
+	public ResponseDTO<Void> create(@RequestBody BillDetailDTO BillDetailsDTO) {
 		
-		BillDetailsService.create(BillDetailsDTO);
+		billDetailsService.create(BillDetailsDTO);
 		return ResponseDTO.<Void>builder()
 					.status(200)
 					.msg("ok")
@@ -39,11 +39,11 @@ public class BillDetailsController {
 	}
 	
 	@GetMapping("/")
-	public ResponseDTO<Page<BillDetailsDTO>> getAll(@ModelAttribute SearchDTO searchDTO) {
-		return ResponseDTO.<Page<BillDetailsDTO>>builder()
+	public ResponseDTO<Page<BillDetailDTO>> getAll(@ModelAttribute SearchDTO searchDTO) {
+		return ResponseDTO.<Page<BillDetailDTO>>builder()
 					.status(200)
 					.msg("ok")
-					.data(BillDetailsService.getAll(searchDTO))
+					.data(billDetailsService.getAll(searchDTO))
 					.build();
 	}
 }

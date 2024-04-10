@@ -30,12 +30,10 @@ public class SecurityConfig {
 		auth.userDetailsService(userDetailsService)
 			.passwordEncoder(new BCryptPasswordEncoder()); // so sánh với mật khẩu người dùng trong csdl	
 		
-		System.out.println("1");
 	}
 	
 	@Bean // để check mật khẩu tài khoản bên LogController , tạo bean cho kiểu trả về khác với @Autowired
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-		System.out.println("2");
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 	
@@ -54,10 +52,7 @@ public class SecurityConfig {
 			.and().httpBasic()
 			.and().csrf().disable();
 		
-		httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-		
-		System.out.println("3");
-			
+		httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);			
 			
 		return httpSecurity.build();			
 	}	
